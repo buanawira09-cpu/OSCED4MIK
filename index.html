@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSCE Stasiun 5 — Statistik Fasilitas Pelayanan Kesehatan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0D2B4E; --nm:#1A3F6B; --blue:#2563A8; --sky:#5B9BD5;
+  --sl:#A8CBE8; --sp:#E8F3FB; --gold:#C9A227; --gl:#E8C656;
+  --gp:#FDF3D4; --white:#fff; --ow:#F7F9FC; --text:#1A2840;
+  --muted:#5A718A; --border:#C8DDEF;
+  --green:#16a34a; --red:#dc2626; --greenl:#dcfce7; --redl:#fee2e2;
+  --greend:#166534; --redd:#991b1b; --amber:#d97706; --amberl:#fef3c7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--sl);min-height:100vh;}
+h1,h2,h3{font-family:'Playfair Display',serif;}
+.mono{font-family:'DM Mono',monospace;}
+
+/* ── HEADER ── */
+.site-header{background:rgba(13,43,78,.97);border-bottom:1px solid rgba(201,162,39,.22);padding:14px 5%;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;}
+.site-header .logo{font-family:'Playfair Display',serif;color:var(--white);font-size:.95rem;}
+.site-header .logo em{color:var(--gold);font-style:normal;}
+.site-header .badge{margin-left:auto;background:rgba(201,162,39,.18);color:var(--gl);font-family:'DM Mono',monospace;font-size:.65rem;padding:4px 12px;border-radius:2px;letter-spacing:.1em;text-transform:uppercase;}
+.site-header .timer-pill{display:none;align-items:center;gap:8px;background:rgba(220,38,38,.14);border:1px solid rgba(220,38,38,.35);border-radius:20px;padding:6px 16px;}
+.site-header .timer-pill.on{display:flex;}
+.site-header .timer-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite;}
+.site-header .timer-pill span{font-family:'DM Mono',monospace;color:#fca5a5;font-size:.85rem;font-weight:500;letter-spacing:.03em;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+/* ── WRAP ── */
+.wrap{max-width:900px;margin:0 auto;padding:40px 5% 80px;}
+
+/* ── SCREENS ── */
+.screen{display:none;}
+.screen.on{display:block;animation:fadeUp .5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+
+/* LOGIN */
+.login-shell{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px 5%;}
+.login-card{background:rgba(255,255,255,.04);border:1px solid rgba(168,203,232,.16);border-radius:4px;padding:44px 40px;max-width:440px;width:100%;}
+.login-card .eyebrow{font-family:'DM Mono',monospace;color:var(--gold);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;}
+.login-card h1{color:var(--white);font-size:1.7rem;font-weight:600;line-height:1.25;margin-bottom:8px;}
+.login-card .sub{color:var(--sl);font-size:.9rem;margin-bottom:32px;line-height:1.5;}
+.field{margin-bottom:20px;}
+.field label{display:block;color:var(--sl);font-size:.78rem;font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;}
+.field input, .field textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(168,203,232,.25);border-radius:3px;padding:12px 14px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.95rem;transition:border-color .2s;}
+.field input:focus, .field textarea:focus{outline:none;border-color:var(--gold);}
+.field input::placeholder,.field textarea::placeholder{color:rgba(168,203,232,.4);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:var(--navy);border:none;border-radius:3px;padding:13px 28px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s,transform .15s;width:100%;}
+.btn:hover{background:var(--gl);}
+.btn:active{transform:scale(.98);}
+.btn.ghost{background:transparent;color:var(--sl);border:1px solid rgba(168,203,232,.3);}
+.btn.ghost:hover{background:rgba(255,255,255,.05);color:var(--white);}
+.btn.small{width:auto;padding:9px 20px;font-size:.82rem;}
+.err-msg{color:#fca5a5;font-size:.8rem;margin-top:14px;display:none;}
+.err-msg.on{display:block;}
+
+/* BRIEFING */
+.brief-card{background:rgba(255,255,255,.04);border:1px solid rgba(168,203,232,.16);border-radius:4px;overflow:hidden;}
+.brief-head{background:linear-gradient(135deg,var(--nm),var(--navy));padding:32px 36px;border-bottom:1px solid rgba(201,162,39,.25);}
+.brief-head .st-no{font-family:'DM Mono',monospace;color:var(--gold);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px;}
+.brief-head h1{color:var(--white);font-size:1.55rem;font-weight:600;margin-bottom:6px;}
+.brief-head .case{color:var(--sl);font-size:.92rem;}
+.brief-body{padding:32px 36px;}
+.brief-section{margin-bottom:26px;}
+.brief-section:last-child{margin-bottom:0;}
+.brief-section h3{color:var(--white);font-size:1rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.brief-section h3::before{content:'';width:3px;height:16px;background:var(--gold);display:inline-block;}
+.brief-section p{color:var(--sl);font-size:.9rem;line-height:1.7;}
+.comp-list{list-style:none;display:grid;gap:8px;}
+.comp-list li{display:flex;align-items:flex-start;gap:10px;background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.2);border-radius:3px;padding:10px 14px;color:var(--gl);font-size:.86rem;}
+.comp-list li::before{content:'✓';color:var(--gold);font-weight:700;flex-shrink:0;}
+.task-list{list-style:none;counter-reset:task;display:grid;gap:10px;}
+.task-list li{counter-increment:task;display:flex;gap:12px;color:var(--sl);font-size:.88rem;line-height:1.6;}
+.task-list li::before{content:counter(task);flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(91,155,213,.18);border:1px solid rgba(91,155,213,.4);color:var(--sky);font-family:'DM Mono',monospace;font-size:.72rem;display:flex;align-items:center;justify-content:center;}
+.data-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px;}
+.data-grid .dcard{background:rgba(255,255,255,.03);border:1px solid rgba(168,203,232,.15);border-radius:3px;padding:14px;text-align:center;}
+.data-grid .dcard .m{font-family:'DM Mono',monospace;color:var(--gold);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.data-grid .dcard .v{color:var(--white);font-size:.82rem;line-height:1.6;}
+.brief-footer{padding:26px 36px;border-top:1px solid rgba(168,203,232,.12);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.brief-footer .note{color:rgba(168,203,232,.6);font-size:.78rem;max-width:340px;}
+.warn-box{background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.3);border-radius:3px;padding:14px 16px;margin-top:18px;display:flex;gap:12px;}
+.warn-box .ic{color:var(--amber);font-size:1.1rem;flex-shrink:0;}
+.warn-box p{color:#fcd34d;font-size:.82rem;line-height:1.6;}
+
+@media(max-width:640px){
+  .data-grid{grid-template-columns:1fr;}
+  .brief-head,.brief-body,.brief-footer{padding:24px 22px;}
+  .brief-footer{flex-direction:column;align-items:stretch;}
+}
+
+/* WORKSPACE */
+.ws-topbar{position:sticky;top:64px;z-index:90;background:rgba(13,43,78,.98);border-bottom:1px solid rgba(168,203,232,.14);padding:16px 5%;}
+.ws-topbar-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+.stepper{display:flex;gap:6px;flex:1;min-width:260px;}
+.stepper .st{flex:1;text-align:center;padding:9px 6px;border-radius:3px;background:rgba(255,255,255,.04);border:1px solid rgba(168,203,232,.14);cursor:default;transition:all .2s;}
+.stepper .st .n{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--sl);letter-spacing:.06em;}
+.stepper .st .t{font-size:.72rem;color:rgba(168,203,232,.55);margin-top:2px;}
+.stepper .st.active{background:rgba(201,162,39,.15);border-color:rgba(201,162,39,.4);}
+.stepper .st.active .n,.stepper .st.active .t{color:var(--gl);}
+.stepper .st.done{border-color:rgba(22,163,74,.4);}
+.stepper .st.done .n{color:var(--green);}
+
+.ws-body{max-width:940px;margin:0 auto;padding:36px 5% 100px;}
+.panel{display:none;background:rgba(255,255,255,.035);border:1px solid rgba(168,203,232,.15);border-radius:4px;padding:32px;}
+.panel.on{display:block;animation:fadeUp .4s ease both;}
+.panel h2{color:var(--white);font-size:1.25rem;font-weight:600;margin-bottom:6px;}
+.panel .desc{color:var(--sl);font-size:.86rem;margin-bottom:26px;line-height:1.6;}
+
+.month-block{margin-bottom:22px;border:1px solid rgba(168,203,232,.13);border-radius:3px;overflow:hidden;}
+.month-block .mh{background:rgba(37,99,168,.15);padding:12px 18px;font-family:'DM Mono',monospace;color:var(--sky);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid rgba(168,203,232,.13);}
+.month-block .mb{padding:18px 18px 20px;}
+
+.calc-table{width:100%;border-collapse:collapse;margin-bottom:10px;}
+.calc-table th{background:rgba(255,255,255,.04);color:var(--sl);font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;padding:9px 8px;text-align:left;border-bottom:1px solid rgba(168,203,232,.15);}
+.calc-table td{padding:8px 8px;border-bottom:1px solid rgba(168,203,232,.08);color:var(--sl);font-size:.84rem;}
+.calc-table td:first-child{color:var(--white);font-weight:500;}
+.calc-table input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(168,203,232,.22);border-radius:3px;padding:8px 10px;color:var(--white);font-family:'DM Mono',monospace;font-size:.85rem;}
+.calc-table input:focus{outline:none;border-color:var(--gold);}
+.calc-table tr.rekap td{background:rgba(201,162,39,.06);}
+.calc-table tr.rekap td:first-child{color:var(--gl);}
+.mtag{display:inline-block;background:rgba(220,38,38,.15);color:#fca5a5;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:2px;margin-left:6px;vertical-align:middle;}
+.mtag.auto{background:rgba(22,163,74,.15);color:#86efac;}
+
+.room-sub{color:var(--gl);font-size:.78rem;font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;margin:16px 0 10px;display:flex;align-items:center;gap:8px;}
+.room-sub:first-child{margin-top:0;}
+.room-sub .tag{background:rgba(201,162,39,.15);color:var(--gl);padding:2px 8px;border-radius:2px;font-size:.68rem;}
+.room-sub .tag.edit{background:rgba(220,38,38,.15);color:#fca5a5;}
+.sensus-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 12px;margin-bottom:6px;}
+.sensus-grid .sf{display:flex;flex-direction:column;gap:5px;}
+.sensus-grid .sf label{font-size:.68rem;color:rgba(168,203,232,.65);font-family:'DM Mono',monospace;letter-spacing:.02em;line-height:1.3;min-height:2.4em;}
+.sensus-grid .sf input{background:rgba(255,255,255,.05);border:1px solid rgba(168,203,232,.18);border-radius:3px;padding:8px 10px;color:var(--sl);font-family:'DM Mono',monospace;font-size:.84rem;width:100%;}
+.sensus-grid .sf input:disabled{opacity:.75;cursor:default;}
+.sensus-grid .sf.editable input{background:rgba(220,38,38,.07);border:1.5px solid rgba(220,38,38,.4);color:var(--white);font-weight:600;}
+.sensus-grid .sf.editable input:focus{outline:none;border-color:#fca5a5;}
+.sensus-grid .sf.editable label{color:#fca5a5;}
+.odc-note{background:rgba(217,119,6,.08);border:1px dashed rgba(217,119,6,.3);border-radius:3px;padding:12px 16px;margin:12px 0 4px;}
+.odc-note p{color:#fcd34d;font-size:.8rem;line-height:1.55;}
+.gab-readout{margin-top:14px;padding:11px 14px;background:rgba(37,99,168,.12);border:1px solid rgba(37,99,168,.3);border-radius:3px;color:var(--sky);font-family:'DM Mono',monospace;font-size:.78rem;}
+@media(max-width:640px){.sensus-grid{grid-template-columns:repeat(2,1fr);}}
+
+.ref-note{background:rgba(91,155,213,.08);border:1px solid rgba(91,155,213,.22);border-radius:3px;padding:12px 16px;margin-bottom:18px;}
+.ref-note p{color:var(--sky);font-size:.8rem;line-height:1.6;}
+
+.graph-shell{background:rgba(255,255,255,.03);border:1px solid rgba(168,203,232,.15);border-radius:3px;padding:20px;text-align:center;}
+.graph-shell svg{max-width:100%;height:auto;}
+.coord-fields{display:flex;justify-content:center;gap:24px;margin-bottom:18px;flex-wrap:wrap;}
+.coord-fields .cf{text-align:center;}
+.coord-fields .cf .l{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--sl);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+.coord-fields .cf .v{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--gl);font-weight:500;}
+.gbj-legend{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:14px;font-size:.74rem;color:var(--sl);}
+.gbj-legend .sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+.gbj-status{margin-top:16px;padding:12px 16px;border-radius:3px;font-size:.83rem;line-height:1.6;background:rgba(255,255,255,.04);border:1px solid rgba(168,203,232,.2);color:var(--sl);text-align:left;}
+.gbj-status.ok{background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.35);color:#86efac;}
+.gbj-status.bad{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.35);color:#fca5a5;}
+
+.panel-nav{display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:24px;border-top:1px solid rgba(168,203,232,.12);}
+.panel-nav .btn{width:auto;padding:12px 26px;}
+
+textarea.interp{min-height:150px;resize:vertical;line-height:1.6;}
+
+/* HASIL / PRINT */
+.result-card{background:rgba(255,255,255,.04);border:1px solid rgba(168,203,232,.16);border-radius:4px;padding:40px;}
+.result-head{text-align:center;padding-bottom:28px;border-bottom:1px solid rgba(168,203,232,.15);margin-bottom:28px;}
+.result-head h1{color:var(--white);font-size:1.4rem;margin-bottom:8px;}
+.result-head .meta{color:var(--sl);font-size:.85rem;line-height:1.6;}
+.result-actions{display:flex;gap:12px;justify-content:center;margin-top:28px;}
+.result-actions .btn{width:auto;padding:13px 30px;}
+
+@media print{
+  :root{ --white:#111827; --sl:#374151; --gold:#8a6108; --gl:#6b4e08; --sky:#1d4ed8; --muted:#4b5563; }
+  .site-header,.ws-topbar,.panel-nav,.result-actions{display:none!important;}
+  body{background:white;color:#111;}
+  .screen{display:none!important;}
+  .screen.print-active{display:block!important;}
+  .result-card{border:none;background:white;padding:0;}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">OSCE <em>Prodi D4 Manajemen Informasi Kesehatan</em></div>
+  <div class="badge">Stasiun 5</div>
+  <div class="timer-pill" id="timerPill"><span class="dot"></span><span id="timerText">10:00</span></div>
+</header>
+
+<!-- SCREEN 1 — LOGIN -->
+<section class="screen on" id="screen-login">
+  <div class="login-shell">
+    <div class="login-card">
+      <div class="eyebrow">Ujian OSCE · Stasiun 5</div>
+      <h1>Statistik Fasilitas Pelayanan Kesehatan</h1>
+      <p class="sub">Masukkan identitas peserta untuk memulai. Setiap nomor ujian hanya dapat digunakan satu kali.</p>
+      <div class="field">
+        <label>Nomor Ujian / NIM</label>
+        <input type="text" id="loginNo" placeholder="Contoh: 24 atau 2024010045" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Nama Peserta</label>
+        <input type="text" id="loginNama" placeholder="Nama lengkap sesuai kartu ujian" autocomplete="off">
+      </div>
+      <button class="btn" onclick="doLogin()">Masuk</button>
+      <div class="err-msg" id="loginErr">Nomor ujian dan nama wajib diisi.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREEN 2 — BRIEFING -->
+<section class="screen" id="screen-briefing">
+  <div class="wrap">
+    <div class="brief-card">
+      <div class="brief-head">
+        <div class="st-no">Stasiun 05</div>
+        <h1>Statistik Fasilitas Pelayanan Kesehatan</h1>
+        <div class="case">Kasus: Analisis Indikator Mutu Pelayanan Rumah Sakit</div>
+      </div>
+      <div class="brief-body">
+
+        <div class="brief-section">
+          <h3>Kompetensi yang Diuji</h3>
+          <ul class="comp-list">
+            <li>Seleksi data</li>
+            <li>Pengolahan data (manual atau elektronik)</li>
+            <li>Validasi data</li>
+            <li>Perilaku profesional</li>
+          </ul>
+        </div>
+
+        <div class="brief-section">
+          <h3>Skenario</h3>
+          <p>Anda sebagai perekam medis di RS Polkeska Bali diminta untuk menghitung indikator mutu pelayanan rumah sakit periode Januari – Maret 2025. Terdapat dua ruang perawatan, masing-masing dengan 5 tempat tidur.</p>
+          <div class="data-grid">
+            <div class="dcard"><div class="m">Kamar A</div><div class="v">5 bed<br>Data sensus tersedia lengkap</div></div>
+            <div class="dcard"><div class="m">Kamar B</div><div class="v">5 bed<br>Terdapat data ODC yang perlu diputuskan</div></div>
+            <div class="dcard"><div class="m">Periode</div><div class="v">Januari – Maret 2025<br>(Triwulan I)</div></div>
+          </div>
+          <p style="margin-top:14px;">Data lengkap kedua kamar akan tersedia pada tahap "Data Sensus" setelah ujian dimulai.</p>
+        </div>
+
+        <div class="brief-section">
+          <h3>Tugas Peserta Ujian</h3>
+          <ul class="task-list">
+            <li>Tentukan perlakuan data pasien ODC (One Day Care) Kamar B sesuai kaidah yang berlaku.</li>
+            <li>Hitung BOR (Bed Occupancy Rate) secara manual per bulan dan rekap triwulan. Indikator AvLOS, TOI, dan BTO akan terhitung otomatis dari data yang tersedia.</li>
+            <li>Amati posisi titik pada Grafik Barber Johnson yang tergambar otomatis.</li>
+            <li>Buat interpretasi hasil berdasarkan standar Kementerian Kesehatan RI.</li>
+          </ul>
+        </div>
+
+        <div class="warn-box">
+          <div class="ic">⏱</div>
+          <p>Waktu pengerjaan stasiun ini adalah <strong>10 menit</strong>, dimulai sejak Anda menekan tombol "Mulai Ujian". Waktu akan berjalan otomatis dan tidak dapat dijeda.</p>
+        </div>
+
+      </div>
+      <div class="brief-footer">
+        <div class="note">Pastikan identitas Anda sudah benar sebelum memulai. Ujian tidak dapat diulang setelah disubmit.</div>
+        <button class="btn small" onclick="startExam()" style="min-width:180px;">Mulai Ujian (10:00)</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREEN 3 — WORKSPACE -->
+<section class="screen" id="screen-workspace">
+  <div class="ws-topbar">
+    <div class="ws-topbar-in">
+      <div class="stepper" id="stepper">
+        <div class="st" data-step="0"><div class="n">01</div><div class="t">Data Sensus</div></div>
+        <div class="st" data-step="1"><div class="n">02</div><div class="t">Indikator</div></div>
+        <div class="st" data-step="2"><div class="n">03</div><div class="t">Grafik GBJ</div></div>
+        <div class="st" data-step="3"><div class="n">04</div><div class="t">Interpretasi</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ws-body">
+
+    <!-- STEP A -->
+    <div class="panel" id="panel-0">
+      <h2>Data Sensus</h2>
+      <p class="desc">Data Kamar A sudah tersedia lengkap. Untuk Kamar B, data dasar sudah tersedia — lengkapi <strong>Lama Dirawat</strong> dan <strong>Jumlah Hari Perawatan</strong> setiap bulan berdasarkan data tersebut.</p>
+      <div id="sensusMonths"></div>
+      <div class="panel-nav">
+        <span></span>
+        <button class="btn small" onclick="goStep(1)">Lanjut ke Perhitungan Indikator →</button>
+      </div>
+    </div>
+
+    <!-- STEP B -->
+    <div class="panel" id="panel-1">
+      <h2>Perhitungan Indikator Mutu</h2>
+      <p class="desc">Setiap bulan menguji satu indikator berbeda secara manual — indikator lainnya terhitung otomatis dari data gabungan Kamar A dan B. Rekap Triwulan I dihitung otomatis sepenuhnya.</p>
+      <div class="ref-note"><p>BOR = (Total Hari Rawat ÷ Kapasitas) × 100%. AvLOS = Lama Dirawat ÷ Pasien Keluar. TOI = (Kapasitas − Total Hari Rawat) ÷ Pasien Keluar. BTO = Pasien Keluar ÷ Tempat Tidur. Kapasitas = 10 TT × Jumlah Hari Periode.</p></div>
+
+      <table class="calc-table">
+        <thead><tr><th>Periode</th><th>Kapasitas</th><th>Total Hari Rawat</th><th>BOR (%)</th><th>AvLOS (hari)</th><th>TOI (hari)</th><th>BTO (kali)</th></tr></thead>
+        <tbody>
+          <tr><td>Januari <span class="mtag">hitung BOR</span></td><td id="kap-jan">—</td><td id="hp-jan">—</td><td><input type="number" step="0.01" id="ind-jan-bor" placeholder="hitung"></td><td id="auto-avlos-jan">—</td><td id="auto-toi-jan">—</td><td id="auto-bto-jan">—</td></tr>
+          <tr><td>Februari <span class="mtag">hitung TOI</span></td><td id="kap-feb">—</td><td id="hp-feb">—</td><td id="auto-bor-feb">—</td><td id="auto-avlos-feb">—</td><td><input type="number" step="0.01" id="ind-feb-toi" placeholder="hitung"></td><td id="auto-bto-feb">—</td></tr>
+          <tr><td>Maret <span class="mtag">hitung BTO</span></td><td id="kap-mar">—</td><td id="hp-mar">—</td><td id="auto-bor-mar">—</td><td id="auto-avlos-mar">—</td><td id="auto-toi-mar">—</td><td><input type="number" step="0.01" id="ind-mar-bto" placeholder="hitung"></td></tr>
+          <tr class="rekap"><td>Rekap Triwulan I <span class="mtag auto">otomatis</span></td><td id="kap-tw">—</td><td id="hp-tw">—</td><td id="auto-bor-tw">—</td><td id="auto-avlos-tw">—</td><td id="auto-toi-tw">—</td><td id="auto-bto-tw">—</td></tr>
+        </tbody>
+      </table>
+
+      <div class="panel-nav">
+        <button class="btn ghost small" onclick="goStep(0)">← Kembali</button>
+        <button class="btn small" onclick="goStep(2)">Lanjut ke Grafik →</button>
+      </div>
+    </div>
+
+    <!-- STEP C -->
+    <div class="panel" id="panel-2">
+      <h2>Grafik Barber Johnson</h2>
+      <p class="desc">Titik rekap Triwulan I akan tergambar otomatis begitu perlakuan data ODC pada ketiga bulan sudah ditentukan.</p>
+
+      <div class="graph-shell">
+        <div class="coord-fields">
+          <div class="cf"><div class="l">TOI (X)</div><div class="v" id="coordX">—</div></div>
+          <div class="cf"><div class="l">AvLOS (Y)</div><div class="v" id="coordY">—</div></div>
+        </div>
+
+        <svg viewBox="0 0 520 420" id="gbjSvg" xmlns="http://www.w3.org/2000/svg">
+          <!-- efficient zone -->
+          <rect x="98" y="98" width="56" height="204" fill="rgba(22,163,74,.15)" stroke="rgba(22,163,74,.5)" stroke-width="1"/>
+          <text x="126" y="200" fill="#86efac" font-size="9" font-family="DM Mono, monospace" text-anchor="middle" transform="rotate(-90 126 200)">AREA EFISIEN</text>
+
+          <!-- grid -->
+          <g stroke="rgba(168,203,232,.12)" stroke-width="1">
+            <line x1="154" y1="30" x2="154" y2="370"/><line x1="238" y1="30" x2="238" y2="370"/>
+            <line x1="322" y1="30" x2="322" y2="370"/><line x1="406" y1="30" x2="406" y2="370"/>
+            <line x1="70" y1="302" x2="490" y2="302"/><line x1="70" y1="234" x2="490" y2="234"/>
+            <line x1="70" y1="166" x2="490" y2="166"/><line x1="70" y1="98" x2="490" y2="98"/>
+          </g>
+
+          <!-- BTO lines -->
+          <g stroke="#5B9BD5" stroke-width="1.3" stroke-dasharray="4,3">
+            <line x1="70" y1="94" x2="411" y2="370"/>
+            <line x1="161" y1="30" x2="490" y2="296"/>
+            <line x1="331" y1="30" x2="490" y2="159"/>
+            <line x1="468" y1="30" x2="490" y2="48"/>
+          </g>
+          <g fill="#5B9BD5" font-size="9" font-family="DM Mono, monospace">
+            <text x="405" y="382" text-anchor="middle">BTO 30</text>
+            <text x="496" y="299">BTO 20</text>
+            <text x="496" y="162">BTO 15</text>
+            <text x="496" y="51">BTO 12,5</text>
+          </g>
+
+          <!-- BOR lines -->
+          <g stroke="#C9A227" stroke-width="1.3">
+            <line x1="70" y1="370" x2="490" y2="30"/>
+            <line x1="70" y1="370" x2="250" y2="30"/>
+            <line x1="70" y1="370" x2="175" y2="30"/>
+            <line x1="70" y1="370" x2="117" y2="30"/>
+          </g>
+          <g fill="#E8C656" font-size="9" font-family="DM Mono, monospace" text-anchor="middle">
+            <text x="490" y="22">BOR 50%</text>
+            <text x="250" y="22">70%</text>
+            <text x="175" y="22">80%</text>
+            <text x="117" y="22">90%</text>
+          </g>
+
+          <!-- axes -->
+          <line x1="70" y1="30" x2="70" y2="370" stroke="#A8CBE8" stroke-width="1.5"/>
+          <line x1="70" y1="370" x2="490" y2="370" stroke="#A8CBE8" stroke-width="1.5"/>
+          <g fill="#A8CBE8" font-size="9" font-family="DM Mono, monospace" text-anchor="middle">
+            <text x="70" y="385">0</text><text x="154" y="385">3</text><text x="238" y="385">6</text>
+            <text x="322" y="385">9</text><text x="406" y="385">12</text><text x="490" y="385">15</text>
+          </g>
+          <g fill="#A8CBE8" font-size="9" font-family="DM Mono, monospace" text-anchor="end">
+            <text x="62" y="373">0</text><text x="62" y="305">3</text><text x="62" y="237">6</text>
+            <text x="62" y="169">9</text><text x="62" y="101">12</text><text x="62" y="33">15</text>
+          </g>
+          <text x="280" y="405" fill="#A8CBE8" font-size="11" font-family="DM Mono, monospace" text-anchor="middle">TOI — Turn Over Interval (hari)</text>
+          <text x="24" y="200" fill="#A8CBE8" font-size="11" font-family="DM Mono, monospace" text-anchor="middle" transform="rotate(-90 24 200)">AvLOS (hari)</text>
+
+          <!-- dynamic point -->
+          <g id="gbjPointGroup" style="opacity:0;transition:opacity .3s;">
+            <circle id="gbjPointCircle" cx="0" cy="0" r="7" fill="#16a34a" stroke="white" stroke-width="1.5"/>
+            <text id="gbjPointLabel" x="0" y="0" fill="white" font-size="10" font-family="DM Mono, monospace" font-weight="600">TW1</text>
+          </g>
+        </svg>
+
+        <div class="gbj-legend">
+          <span><span class="sw" style="background:#C9A227;"></span>Garis BOR</span>
+          <span><span class="sw" style="background:#5B9BD5;"></span>Garis BTO</span>
+          <span><span class="sw" style="background:rgba(22,163,74,.4);"></span>Area Efisien (TOI 1–3 hari, AvLOS 3–12 hari)</span>
+        </div>
+
+        <div class="gbj-status" id="gbjStatus">Tentukan perlakuan data ODC pada ketiga bulan di tahap Data Sensus untuk menampilkan titik hasil perhitungan.</div>
+      </div>
+
+      <div class="panel-nav">
+        <button class="btn ghost small" onclick="goStep(1)">← Kembali</button>
+        <button class="btn small" onclick="goStep(3)">Lanjut ke Interpretasi →</button>
+      </div>
+    </div>
+
+    <!-- STEP D -->
+    <div class="panel" id="panel-3">
+      <h2>Interpretasi Hasil</h2>
+      <p class="desc">Tuliskan interpretasi Anda terhadap hasil perhitungan indikator dan posisi titik pada Grafik Barber Johnson, dikaitkan dengan standar efisiensi Kementerian Kesehatan RI.</p>
+      <div class="field">
+        <label>Interpretasi</label>
+        <textarea class="interp" id="interpText" placeholder="Tuliskan interpretasi Anda di sini..."></textarea>
+      </div>
+      <div class="panel-nav">
+        <button class="btn ghost small" onclick="goStep(2)">← Kembali</button>
+        <button class="btn small" onclick="finishExam()" style="background:var(--green);">Selesai &amp; Lihat Hasil</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SCREEN 4 — HASIL -->
+<section class="screen" id="screen-hasil">
+  <div class="wrap">
+    <div class="result-card">
+      <div class="result-head">
+        <h1>Hasil Ujian — Stasiun 5</h1>
+        <div class="meta" id="resultMeta"></div>
+      </div>
+      <div id="resultBody"></div>
+      <div class="result-actions">
+        <button class="btn ghost small" onclick="cetakHasil()">Cetak Hasil</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+const MONTHS = [{key:'jan',label:'Januari'},{key:'feb',label:'Februari'},{key:'mar',label:'Maret'}];
+const PERIODE = {jan:31, feb:28, mar:31};
+const TT_TOTAL = 10;
+
+const KAMAR_A = {
+  jan:{awal:5, masukBaru:30, pindahan:10, dipindahkan:4, keluarHidup:16, m48:1, mL48:1, ld:132, hp:130},
+  feb:{awal:5, masukBaru:27, pindahan:9,  dipindahkan:3, keluarHidup:15, m48:1, mL48:1, ld:120, hp:118},
+  mar:{awal:5, masukBaru:31, pindahan:10, dipindahkan:4, keluarHidup:16, m48:1, mL48:1, ld:136, hp:134}
+};
+const KAMAR_B_BASE = {
+  jan:{awal:5, masukBaru:25, pindahan:8, dipindahkan:3, keluarHidup:13, m48:1, mL48:1, odc:2},
+  feb:{awal:5, masukBaru:22, pindahan:6, dipindahkan:2, keluarHidup:12, m48:1, mL48:1, odc:2},
+  mar:{awal:5, masukBaru:24, pindahan:7, dipindahkan:3, keluarHidup:13, m48:1, mL48:1, odc:3}
+};
+const FIELD_LABELS = [
+  {k:'awal', l:'Pasien Awal Bulan'},
+  {k:'masukBaru', l:'Pasien Masuk (Baru)'},
+  {k:'pindahan', l:'Pasien Pindahan'},
+  {k:'dipindahkan', l:'Pasien Dipindahkan'},
+  {k:'keluarHidup', l:'Pasien Keluar Hidup'},
+  {k:'m48', l:'Meninggal < 48 Jam'},
+  {k:'mL48', l:'Meninggal > 48 Jam'},
+];
+
+const STATE = { peserta:{}, interpretasi:'', mulai:null, selesai:null, indikatorBorManual:{} };
+const ORIGINAL_TITLE = document.title;
+
+function slugFile(s){
+  return String(s||'').trim().replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,'_');
+}
+
+function cetakHasil(){
+  const nim = slugFile(STATE.peserta.no) || 'NoUjian';
+  const nama = slugFile(STATE.peserta.nama) || 'Peserta';
+  document.title = `Hasil_OSCE_Stasiun5_${nim}_${nama}`;
+  window.print();
+}
+window.addEventListener('afterprint', ()=>{ document.title = ORIGINAL_TITLE; });
+
+function switchScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on','print-active'));
+  const el = document.getElementById(id);
+  el.classList.add('on');
+  if(id==='screen-hasil') el.classList.add('print-active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function doLogin(){
+  const no = document.getElementById('loginNo').value.trim();
+  const nama = document.getElementById('loginNama').value.trim();
+  const err = document.getElementById('loginErr');
+  if(!no || !nama){ err.classList.add('on'); return; }
+  err.classList.remove('on');
+  STATE.peserta = { no, nama };
+  switchScreen('screen-briefing');
+}
+
+function pkOf(room){ return room.dipindahkan + room.keluarHidup + room.m48 + room.mL48; }
+function maskOf(room){ return room.awal + room.masukBaru + room.pindahan; }
+
+const DERIVED_FIELDS = [
+  {k:'masuk', l:'Jumlah Pasien Masuk', get:(r)=>maskOf(r)},
+  {k:'keluar', l:'Jumlah Pasien Keluar (Rawat Inap)', get:(r)=>pkOf(r)},
+  {k:'ld', l:'Lama Dirawat (hari)', get:(r)=>r.ld},
+  {k:'hp', l:'Jumlah Hari Perawatan', get:(r)=>r.hp},
+];
+
+function fieldRow(room, editableKeys, prefix){
+  const rawHtml = FIELD_LABELS.map(f=>`
+    <div class="sf">
+      <label>${f.l}</label>
+      <input type="number" value="${room[f.k]}" disabled>
+    </div>`).join('') +
+    (room.odc !== undefined ? `
+    <div class="sf">
+      <label>Pasien ODC</label>
+      <input type="number" value="${room.odc}" disabled>
+    </div>` : '');
+
+  const derivedHtml = DERIVED_FIELDS.map(f=>{
+    const isEdit = editableKeys.includes(f.k);
+    const id = `${prefix}-${f.k}`;
+    if(isEdit){
+      return `<div class="sf editable">
+        <label>${f.l}</label>
+        <input type="number" step="1" id="${id}" oninput="updateAll()" placeholder="isi">
+      </div>`;
+    }
+    return `<div class="sf">
+      <label>${f.l}</label>
+      <input type="number" value="${f.get(room)}" disabled>
+    </div>`;
+  }).join('');
+
+  return rawHtml + derivedHtml;
+}
+
+function buildStepA(){
+  const wrap = document.getElementById('sensusMonths');
+  wrap.innerHTML = MONTHS.map(m=>{
+    const a = KAMAR_A[m.key], b = KAMAR_B_BASE[m.key];
+    return `
+    <div class="month-block">
+      <div class="mh">${m.label} 2025 — Periode ${PERIODE[m.key]} hari</div>
+      <div class="mb">
+        <div class="room-sub">Kamar A (5 bed) <span class="tag">data lengkap tersedia</span></div>
+        <div class="sensus-grid">${fieldRow(a, [], 'a-'+m.key)}</div>
+
+        <div class="room-sub">Kamar B (5 bed) <span class="tag edit">4 kolom perlu diisi</span></div>
+        <div class="sensus-grid">${fieldRow(b, ['masuk','keluar','ld','hp'], 'b-'+m.key)}</div>
+        <div class="odc-note"><p>Pasien ODC (One Day Care) adalah pasien yang dirawat kurang dari 24 jam tanpa menginap. Pertimbangkan definisi ini saat menghitung Jumlah Pasien Keluar, Lama Dirawat, dan Jumlah Hari Perawatan Kamar B.</p></div>
+
+        <div class="gab-readout" id="gab-${m.key}">Gabungan Kamar A + B: — (lengkapi seluruh kolom Kamar B)</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getCombined(mkey){
+  const a = KAMAR_A[mkey];
+  const ids = ['masuk','keluar','ld','hp'];
+  const vals = {};
+  for(const k of ids){
+    const el = document.getElementById(`b-${mkey}-${k}`);
+    const v = el && el.value !== '' ? parseFloat(el.value) : NaN;
+    if(isNaN(v)) return null;
+    vals[k] = v;
+  }
+  return { hp: a.hp+vals.hp, pk: pkOf(a)+vals.keluar, ld: a.ld+vals.ld };
+}
+
+function computeIndicators(hp,pk,ld,periodeHari,tt){
+  const kapasitas = tt*periodeHari;
+  const bor = kapasitas>0 ? (hp/kapasitas*100) : 0;
+  const avlos = pk>0 ? (ld/pk) : 0;
+  const toi = pk>0 ? ((kapasitas-hp)/pk) : 0;
+  const bto = tt>0 ? (pk/tt) : 0;
+  return {kapasitas,bor,avlos,toi,bto};
+}
+
+const MANUAL_MAP = {jan:'bor', feb:'toi', mar:'bto', tw:null};
+const METRICS = ['bor','avlos','toi','bto'];
+
+function setAutoCell(metric, period, value){
+  if(metric === MANUAL_MAP[period]) return; // leave the manual input untouched
+  const el = document.getElementById(`auto-${metric}-${period}`);
+  if(el) el.textContent = value;
+}
+
+function updateAll(){
+  let hpT=0, pkT=0, ldT=0, periodeT=0, complete=true;
+
+  MONTHS.forEach(m=>{
+    const mkey = m.key;
+    const gabEl = document.getElementById('gab-'+mkey);
+    const c = getCombined(mkey);
+    if(!c){
+      complete = false;
+      gabEl.textContent = 'Gabungan Kamar A + B: — (lengkapi seluruh kolom Kamar B)';
+      document.getElementById('kap-'+mkey).textContent = TT_TOTAL*PERIODE[mkey];
+      document.getElementById('hp-'+mkey).textContent = '—';
+      METRICS.forEach(metric => setAutoCell(metric, mkey, '—'));
+      return;
+    }
+    hpT+=c.hp; pkT+=c.pk; ldT+=c.ld; periodeT+=PERIODE[mkey];
+    const ind = computeIndicators(c.hp,c.pk,c.ld,PERIODE[mkey],TT_TOTAL);
+    gabEl.textContent = `Gabungan Kamar A + B: Hari Perawatan ${c.hp} · Pasien Keluar ${c.pk} · Lama Dirawat ${c.ld}`;
+    document.getElementById('kap-'+mkey).textContent = ind.kapasitas;
+    document.getElementById('hp-'+mkey).textContent = c.hp;
+    setAutoCell('bor', mkey, ind.bor.toFixed(2));
+    setAutoCell('avlos', mkey, ind.avlos.toFixed(2));
+    setAutoCell('toi', mkey, ind.toi.toFixed(2));
+    setAutoCell('bto', mkey, ind.bto.toFixed(2));
+  });
+
+  if(complete){
+    const indTw = computeIndicators(hpT,pkT,ldT,periodeT,TT_TOTAL);
+    document.getElementById('kap-tw').textContent = indTw.kapasitas;
+    document.getElementById('hp-tw').textContent = hpT;
+    setAutoCell('bor','tw', indTw.bor.toFixed(2));
+    setAutoCell('avlos','tw', indTw.avlos.toFixed(2));
+    setAutoCell('toi','tw', indTw.toi.toFixed(2));
+    setAutoCell('bto','tw', indTw.bto.toFixed(2));
+    document.getElementById('coordX').textContent = indTw.toi.toFixed(2)+' hari';
+    document.getElementById('coordY').textContent = indTw.avlos.toFixed(2)+' hari';
+    renderGraphPoint(indTw.toi, indTw.avlos);
+  } else {
+    document.getElementById('kap-tw').textContent = TT_TOTAL*(31+28+31);
+    document.getElementById('hp-tw').textContent = '—';
+    METRICS.forEach(metric => setAutoCell(metric, 'tw', '—'));
+    document.getElementById('coordX').textContent = '—';
+    document.getElementById('coordY').textContent = '—';
+    renderGraphPoint(null,null);
+  }
+}
+
+function renderGraphPoint(toi, avlos){
+  const grp = document.getElementById('gbjPointGroup');
+  const status = document.getElementById('gbjStatus');
+  if(toi===null || avlos===null){
+    grp.style.opacity = 0;
+    status.textContent = 'Tentukan perlakuan data ODC pada ketiga bulan di tahap Data Sensus untuk menampilkan titik hasil perhitungan.';
+    status.className = 'gbj-status';
+    return;
+  }
+  const axisMax = 15;
+  const toiC = Math.min(Math.max(toi,0), axisMax);
+  const avlosC = Math.min(Math.max(avlos,0), axisMax);
+  const px = 70 + (toiC/axisMax)*420;
+  const py = 370 - (avlosC/axisMax)*340;
+  document.getElementById('gbjPointCircle').setAttribute('cx', px);
+  document.getElementById('gbjPointCircle').setAttribute('cy', py);
+  document.getElementById('gbjPointLabel').setAttribute('x', px+11);
+  document.getElementById('gbjPointLabel').setAttribute('y', py-9);
+  const efisien = (toi>=1 && toi<=3 && avlos>=3 && avlos<=12);
+  document.getElementById('gbjPointCircle').setAttribute('fill', efisien ? '#16a34a' : '#dc2626');
+  grp.style.opacity = 1;
+  status.textContent = `Titik Rekap Triwulan I — TOI = ${toi.toFixed(2)} hari, AvLOS = ${avlos.toFixed(2)} hari — ${efisien ? 'berada dalam area efisien' : 'berada di luar area efisien'} (standar Kemenkes RI: TOI ideal 1–3 hari, AvLOS ideal 3–12 hari).`;
+  status.className = 'gbj-status ' + (efisien ? 'ok' : 'bad');
+}
+
+let timerInterval = null;
+let remaining = 10*60;
+
+function startExam(){
+  STATE.mulai = new Date();
+  buildStepA();
+  updateAll();
+  switchScreen('screen-workspace');
+  document.getElementById('timerPill').classList.add('on');
+  goStep(0);
+  timerInterval = setInterval(tickTimer, 1000);
+}
+
+function tickTimer(){
+  remaining--;
+  const mm = String(Math.floor(remaining/60)).padStart(2,'0');
+  const ss = String(remaining%60).padStart(2,'0');
+  document.getElementById('timerText').textContent = `${mm}:${ss}`;
+  if(remaining <= 60){ document.getElementById('timerText').style.color = '#fca5a5'; }
+  if(remaining <= 0){
+    clearInterval(timerInterval);
+    finishExam(true);
+  }
+}
+
+let currentStep = 0;
+function goStep(n){
+  currentStep = n;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('panel-'+n).classList.add('on');
+  document.querySelectorAll('.stepper .st').forEach(s=>{
+    const sn = parseInt(s.dataset.step);
+    s.classList.toggle('active', sn===n);
+    s.classList.toggle('done', sn<n);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function collectState(){
+  STATE.interpretasi = document.getElementById('interpText').value;
+}
+
+function finishExam(timeUp){
+  collectState();
+  STATE.selesai = new Date();
+  clearInterval(timerInterval);
+  renderHasil(timeUp);
+  switchScreen('screen-hasil');
+}
+
+function renderHasil(timeUp){
+  const durasi = STATE.mulai && STATE.selesai ? Math.round((STATE.selesai - STATE.mulai)/1000) : 0;
+  const mm = Math.floor(durasi/60), ss = durasi%60;
+  document.getElementById('resultMeta').innerHTML = `
+    Peserta: <strong style="color:var(--white);">${STATE.peserta.nama}</strong> (No. Ujian ${STATE.peserta.no})<br>
+    Waktu pengerjaan: ${mm} menit ${ss} detik ${timeUp ? '— waktu habis' : ''}
+  `;
+
+  const sensusRows = MONTHS.map(m=>{
+    const a = KAMAR_A[m.key], b = KAMAR_B_BASE[m.key];
+    const inputs = {};
+    ['masuk','keluar','ld','hp'].forEach(k=>{
+      const el = document.getElementById(`b-${m.key}-${k}`);
+      inputs[k] = el ? (el.value || '-') : '-';
+    });
+    const c = getCombined(m.key);
+    return `<tr><td>${m.label}</td><td>A: Masuk ${maskOf(a)} · Keluar ${pkOf(a)} · HP ${a.hp} · LD ${a.ld}</td><td>B diisi: Masuk ${inputs.masuk} · Keluar ${inputs.keluar} · HP ${inputs.hp} · LD ${inputs.ld} (ODC ${b.odc})</td><td>${c ? `HP ${c.hp} · Keluar ${c.pk} · LD ${c.ld}` : '—'}</td></tr>`;
+  }).join('');
+
+  const indRows = ['jan','feb','mar','tw'].map(p=>{
+    const label = p==='tw' ? 'Rekap Triwulan I' : MONTHS.find(m=>m.key===p).label;
+    function getVal(metric){
+      if(metric === MANUAL_MAP[p]){
+        const el = document.getElementById(`ind-${p}-${metric}`);
+        return el ? (el.value || '-') : '-';
+      }
+      const el = document.getElementById(`auto-${metric}-${p}`);
+      return el ? el.textContent : '-';
+    }
+    return `<tr${p==='tw'?' class="rekap"':''}><td>${label}</td><td>${getVal('bor')}</td><td>${getVal('avlos')}</td><td>${getVal('toi')}</td><td>${getVal('bto')}</td></tr>`;
+  }).join('');
+
+  const svgClone = document.getElementById('gbjSvg').outerHTML;
+  const statusText = document.getElementById('gbjStatus').textContent;
+
+
+  document.getElementById('resultBody').innerHTML = `
+    <div class="brief-section">
+      <h3>Data Sensus</h3>
+      <div style="overflow-x:auto;">
+        <table class="calc-table" style="min-width:700px;">
+          <thead><tr><th>Bulan</th><th>Kamar A</th><th>Kamar B (diisi mahasiswa)</th><th>Gabungan</th></tr></thead>
+          <tbody>${sensusRows}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="brief-section">
+      <h3>Perhitungan Indikator</h3>
+      <table class="calc-table">
+        <thead><tr><th>Periode</th><th>BOR (%)</th><th>AvLOS (hari)</th><th>TOI (hari)</th><th>BTO (kali)</th></tr></thead>
+        <tbody>${indRows}</tbody>
+      </table>
+    </div>
+    <div class="brief-section">
+      <h3>Grafik Barber Johnson</h3>
+      <div class="graph-shell">${svgClone}</div>
+      <p style="margin-top:12px;">${statusText}</p>
+    </div>
+    <div class="brief-section">
+      <h3>Interpretasi</h3>
+      <p style="white-space:pre-wrap;">${STATE.interpretasi || '(tidak diisi)'}</p>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
