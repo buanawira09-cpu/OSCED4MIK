@@ -445,9 +445,9 @@ const KAMAR_A = {
   mar:{awal:5, masukBaru:31, pindahan:10, dipindahkan:4, keluarHidup:16, m48:1, mL48:1, ld:136, hp:134}
 };
 const KAMAR_B_BASE = {
-  jan:{awal:5, masukBaru:25, pindahan:8, dipindahkan:3, keluarHidup:13, m48:1, mL48:1, odc:2},
-  feb:{awal:5, masukBaru:22, pindahan:6, dipindahkan:2, keluarHidup:12, m48:1, mL48:1, odc:2},
-  mar:{awal:5, masukBaru:24, pindahan:7, dipindahkan:3, keluarHidup:13, m48:1, mL48:1, odc:3}
+  jan:{awal:5, masukBaru:25, pindahan:8, dipindahkan:3, keluarHidup:13, m48:1, mL48:1, odc:2, ld:108, hp:110},
+  feb:{awal:5, masukBaru:22, pindahan:6, dipindahkan:2, keluarHidup:12, m48:1, mL48:1, odc:2, ld:96,  hp:100},
+  mar:{awal:5, masukBaru:24, pindahan:7, dipindahkan:3, keluarHidup:13, m48:1, mL48:1, odc:3, ld:112, hp:114}
 };
 const FIELD_LABELS = [
   {k:'awal', l:'Pasien Awal Bulan'},
@@ -543,9 +543,9 @@ function buildStepA(){
         <div class="room-sub">Kamar A (5 bed) <span class="tag">data lengkap tersedia</span></div>
         <div class="sensus-grid">${fieldRow(a, [], 'a-'+m.key)}</div>
 
-        <div class="room-sub">Kamar B (5 bed) <span class="tag edit">4 kolom perlu diisi</span></div>
-        <div class="sensus-grid">${fieldRow(b, ['masuk','keluar','ld','hp'], 'b-'+m.key)}</div>
-        <div class="odc-note"><p>Pasien ODC (One Day Care) adalah pasien yang dirawat kurang dari 24 jam tanpa menginap. Pertimbangkan definisi ini saat menghitung Jumlah Pasien Keluar, Lama Dirawat, dan Jumlah Hari Perawatan Kamar B.</p></div>
+        <div class="room-sub">Kamar B (5 bed) <span class="tag edit">2 kolom perlu diisi</span></div>
+        <div class="sensus-grid">${fieldRow(b, ['masuk','keluar'], 'b-'+m.key)}</div>
+        <div class="odc-note"><p>Pasien ODC (One Day Care) adalah pasien yang dirawat kurang dari 24 jam tanpa menginap. Pertimbangkan definisi ini saat menghitung <strong>Jumlah Pasien Keluar (Rawat Inap)</strong> di bawah \u2014 tentukan apakah pasien ODC termasuk dalam hitungan tersebut sesuai kaidah sensus rawat inap.</p></div>
 
         <div class="gab-readout" id="gab-${m.key}">Gabungan Kamar A + B: — (lengkapi seluruh kolom Kamar B)</div>
       </div>
@@ -555,7 +555,8 @@ function buildStepA(){
 
 function getCombined(mkey){
   const a = KAMAR_A[mkey];
-  const ids = ['masuk','keluar','ld','hp'];
+  const b = KAMAR_B_BASE[mkey];
+  const ids = ['masuk','keluar'];
   const vals = {};
   for(const k of ids){
     const el = document.getElementById(`b-${mkey}-${k}`);
@@ -563,7 +564,7 @@ function getCombined(mkey){
     if(isNaN(v)) return null;
     vals[k] = v;
   }
-  return { hp: a.hp+vals.hp, pk: pkOf(a)+vals.keluar, ld: a.ld+vals.ld };
+  return { hp: a.hp+b.hp, pk: pkOf(a)+vals.keluar, ld: a.ld+b.ld };
 }
 
 function computeIndicators(hp,pk,ld,periodeHari,tt){
@@ -717,12 +718,12 @@ function renderHasil(timeUp){
   const sensusRows = MONTHS.map(m=>{
     const a = KAMAR_A[m.key], b = KAMAR_B_BASE[m.key];
     const inputs = {};
-    ['masuk','keluar','ld','hp'].forEach(k=>{
+    ['masuk','keluar'].forEach(k=>{
       const el = document.getElementById(`b-${m.key}-${k}`);
       inputs[k] = el ? (el.value || '-') : '-';
     });
     const c = getCombined(m.key);
-    return `<tr><td>${m.label}</td><td>A: Masuk ${maskOf(a)} · Keluar ${pkOf(a)} · HP ${a.hp} · LD ${a.ld}</td><td>B diisi: Masuk ${inputs.masuk} · Keluar ${inputs.keluar} · HP ${inputs.hp} · LD ${inputs.ld} (ODC ${b.odc})</td><td>${c ? `HP ${c.hp} · Keluar ${c.pk} · LD ${c.ld}` : '—'}</td></tr>`;
+    return `<tr><td>${m.label}</td><td>A: Masuk ${maskOf(a)} · Keluar ${pkOf(a)} · HP ${a.hp} · LD ${a.ld}</td><td>B diisi: Masuk ${inputs.masuk} · Keluar ${inputs.keluar} · HP ${b.hp} (diberikan) · LD ${b.ld} (diberikan) · ODC ${b.odc}</td><td>${c ? `HP ${c.hp} · Keluar ${c.pk} · LD ${c.ld}` : '—'}</td></tr>`;
   }).join('');
 
   const indRows = ['jan','feb','mar','tw'].map(p=>{
